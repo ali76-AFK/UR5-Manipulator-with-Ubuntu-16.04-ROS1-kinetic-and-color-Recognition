@@ -44,6 +44,9 @@ roslaunch ur5_notebook initialize.launch
 # New terminal: docker exec -it ur5 bash + rosrun ur5_notebook ur5_mp.py
 ```
 
+<img width="732" height="620" alt="Image" src="https://github.com/user-attachments/assets/f25908b0-c84a-431d-8d07-398e150c14a5" />
+
+<img width="475" height="451" alt="Image" src="https://github.com/user-attachments/assets/d13c2a5b-74ba-4177-9a16-bbedbdcc1327" />
 
 ## Project Structure
 ```
@@ -56,6 +59,9 @@ ros_ws/
 docker/                     # Containerization
 └── media/                  # Demo screenshots/videos
 ```
+
+## Project Architecture
+<img width="898" height="756" alt="Image" src="https://github.com/user-attachments/assets/572da397-ed65-4441-b9c7-5cd09505247e" />
 
 
 ## Results
@@ -90,7 +96,7 @@ sudo locales dialog                    # Locale/system setup
 build-essential cmake git wget curl    # Build tools + SCM
 python2.7 python2.7-dev python-pip     # Python 2.7 (ROS Kinetic req)
 python-numpy python-opencv             # Vision (HSV detection)
-pkg-config                            # Library linking
+pkg-config                             # Library linking
 ```
 
 #### **2. ROS Kinetic Core**
