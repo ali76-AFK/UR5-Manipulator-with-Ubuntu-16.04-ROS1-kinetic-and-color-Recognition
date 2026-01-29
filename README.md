@@ -84,3 +84,4 @@ roslaunch ur5_notebook initialize.launch  # Gazebo + UR5 sim
 source ur5_kinetic_ws/devel/setup.bash
 rosrun ur5_notebook ur5_mp.py  # Autonomous pick-place!
 ```
+## Videos and Screenshots Available in Media file
