@@ -88,7 +88,7 @@ rosrun ur5_notebook ur5_mp.py  # Autonomous pick-place!
 
 ## Dependencies
 
-## All Dependencies in the Dockerfile
+## All Dependencies in the Dockerfile, on build it and all the below dependencies are automatically added.
 
 ### **1. Base System (Ubuntu 16.04 Xenial)**
 ```
@@ -166,5 +166,3 @@ apt list --installed | grep ros-kinetic | wc -l  # ~80 packages
 rospack packages | grep -E "(ur5|moveit|gazebo)"  # Core list
 rosdep check --from-paths ros_ws/src/  # Missing deps
 ```
-
-**Dockerfile = self-contained**: All deps baked in → `docker build` → **zero host setup needed**. Perfect academic reproducibility! [github](https://github.com/lihuang3/ur5_ROS-Gazebo)
