@@ -1,0 +1,92 @@
+FROM ubuntu:16.04
+
+ENV DEBIAN_FRONTEND=noninteractive \
+    LANG=en_US.UTF-8 \
+    LC_ALL=en_US.UTF-8 \
+    ROS_DISTRO=kinetic
+
+# 1) Base tools, locales, and Python 2 stack
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends \
+        sudo locales dialog \
+        build-essential cmake git wget curl \
+        python2.7 python2.7-dev python-pip \
+        python-numpy python-opencv \
+        pkg-config && \
+    locale-gen en_US.UTF-8 && \
+    update-locale LANG=en_US.UTF-8 && \
+    rm -rf /var/lib/apt/lists/*
+
+# 2) Create non-root user
+RUN useradd -m -s /bin/bash ros && \
+    echo "ros ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
+
+USER ros
+WORKDIR /home/ros
+
+# 3) ROS Kinetic installation (Ubuntu 16.04 Xenial)
+USER root
+RUN sh -c 'echo "deb http://packages.ros.org/ros/ubuntu xenial main" > /etc/apt/sources.list.d/ros-latest.list' && \
+    apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-key 0xB01FA116 && \
+    apt-get update && \
+    apt-get install -y --no-install-recommends \
+        --allow-unauthenticated \
+        ros-kinetic-desktop-full && \
+    rosdep init && \
+    rm -rf /var/lib/apt/lists/*
+
+USER ros
+RUN rosdep update
+
+# 4) ROS environment
+RUN echo "source /opt/ros/kinetic/setup.bash" >> ~/.bashrc
+
+# 5) Create workspace and clone required repos
+USER root
+RUN mkdir -p /ur_ws/src && chown -R ros:ros /ur_ws
+USER ros
+WORKDIR /ur_ws/src
+
+# universal_robot (kinetic-devel branch, as in README)
+RUN git clone -b kinetic-devel https://github.com/ros-industrial/universal_robot.git
+
+# ur5_ROS-Gazebo repository
+RUN git clone https://github.com/lihuang3/ur5_ROS-Gazebo.git
+
+# 6) Install additional ROS packages required by README
+#    - MoveIt
+#    - ur5_moveit_config
+#    - usb_cam
+USER root
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends \
+        --allow-unauthenticated \
+        ros-kinetic-moveit \
+        ros-kinetic-ur5-moveit-config \
+        ros-kinetic-usb-cam && \
+    rm -rf /var/lib/apt/lists/*
+
+# 6b) Manually install deps that rosdep cannot resolve on Xenial
+#     - position_controllers (from ros-kinetic-ros-controllers)
+#     - python-lxml (available in Xenial but rosdep entry is outdated)
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends \
+        --allow-unauthenticated \
+        ros-kinetic-ros-controllers \
+        python-lxml && \
+    rm -rf /var/lib/apt/lists/*
+
+# 7) Resolve remaining dependencies with rosdep (ignore unresolved keys)
+USER ros
+WORKDIR /ur_ws
+RUN bash -lc "source /opt/ros/kinetic/setup.bash && rosdep install --from-paths src --ignore-src --rosdistro kinetic -y || true"
+
+# 8) Build the workspace
+RUN bash -lc "source /opt/ros/kinetic/setup.bash && cd /ur_ws && catkin_make"
+
+# 9) Setup environment for interactive shells
+RUN echo "source /ur_ws/devel/setup.bash" >> ~/.bashrc
+
+WORKDIR /ur_ws
+CMD ["bash"]
+
