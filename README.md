@@ -64,19 +64,19 @@ docker/                     # Containerization
 
 
 ## Meaningful Commit History
-
+```
 git add .
 git commit -m "ROS workspace refactor: src/ layout + academic README"
 git push
-
+```
 
 ## Split commits:
-
+```
 git add docs/ media/
 git commit -m "Add documentation and demo media"
 git add docker/ ros_ws/src/
 git commit -m "Standardize ROS workspace structure"
-
+```
 
 ## Videos and Screenshots Available in Media file
 
