@@ -88,7 +88,7 @@ rosrun ur5_notebook ur5_mp.py  # Autonomous pick-place!
 
 ## Dependencies
 
-## All Dependencies in the Dockerfile, on build it and all the below dependencies are automatically added.
+## All Dependencies in the Dockerfile, only build it and all the below dependencies are automatically added.
 
 ### **1. Base System (Ubuntu 16.04 Xenial)**
 ```
